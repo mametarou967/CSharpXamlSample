@@ -35,7 +35,12 @@
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
 
-            <Button Content="▲" Grid.Row="0" Click="UpButton_Click"/>
+            <Button Content="▲"
+                Grid.Row="0"
+                Click="UpButton_Click"
+                PreviewMouseLeftButtonDown="UpButton_PreviewMouseLeftButtonDown"
+                PreviewMouseLeftButtonUp="ScrollButton_PreviewMouseLeftButtonUp"
+                LostMouseCapture="ScrollButton_LostMouseCapture"/>
             <Grid Grid.Row="1" Background="LightGray" MouseDown="ScrollTrack_MouseDown">
                 <Rectangle x:Name="Slider"
                    Fill="DarkGray"
@@ -46,7 +51,12 @@
                    MouseMove="Slider_MouseMove"
                    MouseUp="Slider_MouseUp"/>
             </Grid>
-            <Button Content="▼" Grid.Row="2" Click="DownButton_Click"/>
+            <Button Content="▼"
+                Grid.Row="2"
+                Click="DownButton_Click"
+                PreviewMouseLeftButtonDown="DownButton_PreviewMouseLeftButtonDown"
+                PreviewMouseLeftButtonUp="ScrollButton_PreviewMouseLeftButtonUp"
+                LostMouseCapture="ScrollButton_LostMouseCapture"/>
         </Grid>
     </Grid>
 </Window>

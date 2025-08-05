@@ -19,13 +19,28 @@ namespace CSharpXamlSample.Views
         private const double ExtraPadding = 8; // 上下4pxずつ
         private const double ScrollViewerHeight = LineHeight * VisibleLines + ExtraPadding;
 
+        private DispatcherTimer _repeatScrollTimer;
+        private int _scrollDirection = 0; // -1:上, +1:下
+
         public MainWindow()
         {
             InitializeComponent();
             MyScrollViewer.Height = ScrollViewerHeight;
             ((Border)MyScrollViewer.Parent).Height = ScrollViewerHeight;
+
+            // 🔁 タイマー初期化（100ms間隔）
+            _repeatScrollTimer = new DispatcherTimer();
+            _repeatScrollTimer.Interval = TimeSpan.FromMilliseconds(100);
+            _repeatScrollTimer.Tick += RepeatScrollTick;
+
             InitText();
         }
+
+        private void RepeatScrollTick(object sender, EventArgs e)
+        {
+            SetScrollToLine(_currentLine + _scrollDirection);
+        }
+
         private void InitText()
         {
             for (int i = 1; i <= 50; i++)
@@ -160,6 +175,33 @@ namespace CSharpXamlSample.Views
             double offset = ratio * (MyScrollViewer.ExtentHeight - MyScrollViewer.ViewportHeight);
             MyScrollViewer.ScrollToVerticalOffset(offset);
             UpdateSlider();
+        }
+
+        private void UpButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _scrollDirection = -1;
+            SetScrollToLine(_currentLine + _scrollDirection); // まず1回スクロール
+            _repeatScrollTimer.Start();
+            Mouse.Capture((IInputElement)sender);
+        }
+
+        private void DownButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _scrollDirection = 1;
+            SetScrollToLine(_currentLine + _scrollDirection);
+            _repeatScrollTimer.Start();
+            Mouse.Capture((IInputElement)sender);
+        }
+
+        private void ScrollButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            _repeatScrollTimer.Stop();
+            Mouse.Capture(null);
+        }
+
+        private void ScrollButton_LostMouseCapture(object sender, MouseEventArgs e)
+        {
+            _repeatScrollTimer.Stop();
         }
     }
 }
