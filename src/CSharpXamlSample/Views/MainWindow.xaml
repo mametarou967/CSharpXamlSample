@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:CSharpXamlSample.ViewModels"
-        xmlns:prism="http://prismlibrary.com/"
+        xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Wpf"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="{Binding Title}" Height="500" Width="1200"
         WindowStartupLocation="CenterScreen">
