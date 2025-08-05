@@ -1,7 +1,5 @@
-﻿using Prism.Events;
-using E220_900T225_ConfigTool.Model.Logging;
+﻿using System;
 using System.Windows;
-using System;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;

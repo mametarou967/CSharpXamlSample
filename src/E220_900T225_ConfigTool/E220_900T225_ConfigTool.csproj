@@ -64,31 +64,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\Common\Common.cs" />
-    <Compile Include="Model\Common\EnumNameAttribute.cs" />
-    <Compile Include="Model\Logging\LogEvent.cs" />
-    <Compile Include="Model\Logging\LogUpdated.cs" />
-    <Compile Include="Model\Logging\ILogWriteRequester.cs" />
-    <Compile Include="Model\Logging\LogWriter.cs" />
-    <Compile Include="Model\Logging\LogWriteRequester.cs" />
-    <Compile Include="Model\Register\AirDataRate_SF_BW.cs" />
-    <Compile Include="Model\Register\Register.cs" />
-    <Compile Include="Model\Register\Register05.cs" />
-    <Compile Include="Model\Register\Register04.cs" />
-    <Compile Include="Model\Register\Register06.cs" />
-    <Compile Include="Model\Register\Register07.cs" />
-    <Compile Include="Model\Register\Register08.cs" />
-    <Compile Include="Model\Register\Register03.cs" />
-    <Compile Include="Model\Register\Register02.cs" />
-    <Compile Include="Model\Register\Register01.cs" />
-    <Compile Include="Model\Register\Register00.cs" />
-    <Compile Include="Model\SerialCom\SerialCom.cs" />
-    <Compile Include="Model\E220_900_T225_ProtocolManager\E220_900_T225_ProtocolManager.cs" />
-    <Compile Include="Model\SerialPortManager\SerialPortManager.cs" />
-    <Compile Include="ViewModels\ComboBoxViewModel.cs" />
-    <Compile Include="ViewModels\LogItem.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\RadioButtonConverter.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
