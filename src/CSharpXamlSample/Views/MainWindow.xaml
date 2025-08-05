@@ -13,14 +13,14 @@
             <ColumnDefinition Width="30"/>
         </Grid.ColumnDefinitions>
 
-        <!-- ✅ 外枠を追加 -->
-        <Border Grid.Column="0" BorderBrush="Black" BorderThickness="2" Height="144">
+        <!-- テキスト表示枠 -->
+        <Border Grid.Column="0" BorderBrush="Black" BorderThickness="2" Height="152">
             <ScrollViewer x:Name="MyScrollViewer"
                           VerticalScrollBarVisibility="Hidden"
                           PreviewMouseLeftButtonDown="ScrollViewer_PreviewMouseLeftButtonDown"
                           PreviewMouseMove="ScrollViewer_PreviewMouseMove"
                           PreviewMouseLeftButtonUp="ScrollViewer_PreviewMouseLeftButtonUp"
-                          Height="144"
+                          Height="152"
                           Padding="0,4,0,4">
                 <StackPanel x:Name="TextPanel" />
             </ScrollViewer>
@@ -28,7 +28,6 @@
 
         <!-- スクロールバーと上下ボタン -->
         <Grid Grid.Column="1" Height="152">
-            <!-- ← ScrollViewerと同じ高さに修正 -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
@@ -36,27 +35,29 @@
             </Grid.RowDefinitions>
 
             <Button Content="▲"
-                Grid.Row="0"
-                Click="UpButton_Click"
-                PreviewMouseLeftButtonDown="UpButton_PreviewMouseLeftButtonDown"
-                PreviewMouseLeftButtonUp="ScrollButton_PreviewMouseLeftButtonUp"
-                LostMouseCapture="ScrollButton_LostMouseCapture"/>
+                    Grid.Row="0"
+                    Click="UpButton_Click"
+                    PreviewMouseLeftButtonDown="UpButton_PreviewMouseLeftButtonDown"
+                    PreviewMouseLeftButtonUp="ScrollButton_PreviewMouseLeftButtonUp"
+                    LostMouseCapture="ScrollButton_LostMouseCapture"/>
+
             <Grid Grid.Row="1" Background="LightGray" MouseDown="ScrollTrack_MouseDown">
                 <Rectangle x:Name="Slider"
-                   Fill="DarkGray"
-                   VerticalAlignment="Top"
-                   Height="30"
-                   Margin="5,0"
-                   MouseDown="Slider_MouseDown"
-                   MouseMove="Slider_MouseMove"
-                   MouseUp="Slider_MouseUp"/>
+                           Fill="DarkGray"
+                           VerticalAlignment="Top"
+                           Height="30"
+                           Margin="5,0"
+                           MouseDown="Slider_MouseDown"
+                           MouseMove="Slider_MouseMove"
+                           MouseUp="Slider_MouseUp"/>
             </Grid>
+
             <Button Content="▼"
-                Grid.Row="2"
-                Click="DownButton_Click"
-                PreviewMouseLeftButtonDown="DownButton_PreviewMouseLeftButtonDown"
-                PreviewMouseLeftButtonUp="ScrollButton_PreviewMouseLeftButtonUp"
-                LostMouseCapture="ScrollButton_LostMouseCapture"/>
+                    Grid.Row="2"
+                    Click="DownButton_Click"
+                    PreviewMouseLeftButtonDown="DownButton_PreviewMouseLeftButtonDown"
+                    PreviewMouseLeftButtonUp="ScrollButton_PreviewMouseLeftButtonUp"
+                    LostMouseCapture="ScrollButton_LostMouseCapture"/>
         </Grid>
     </Grid>
 </Window>

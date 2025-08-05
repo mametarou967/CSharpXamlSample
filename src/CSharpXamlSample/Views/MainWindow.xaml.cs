@@ -2,43 +2,38 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
+using System.Windows.Media;
 
 namespace CSharpXamlSample.Views
 {
     public partial class MainWindow : Window
     {
-        private double _velocity = 0;
-        private DispatcherTimer _inertiaTimer;
+        private const double LineHeight = 24;
+        private const int VisibleLines = 6;
+        private const double PaddingTopBottom = 4;
+        private const double ScrollViewerHeight = LineHeight * VisibleLines + PaddingTopBottom * 2;
 
+        private int _currentLine = 0;
         private bool _draggingSlider = false;
         private double _sliderOffsetY;
 
-        private const double LineHeight = 24;
-        private const int VisibleLines = 6;
-        private const double ExtraPadding = 8; // 上下4pxずつ
-        private const double ScrollViewerHeight = LineHeight * VisibleLines + ExtraPadding;
+        private Point _startDragPoint;
+        private int _startLine;
 
-        private DispatcherTimer _repeatScrollTimer;
-        private int _scrollDirection = 0; // -1:上, +1:下
+        private DateTime _pressStartTime;
+        private bool _awaitingHoldStart = false;
+        private UIElement _heldButton = null;
 
         public MainWindow()
         {
             InitializeComponent();
+
             MyScrollViewer.Height = ScrollViewerHeight;
             ((Border)MyScrollViewer.Parent).Height = ScrollViewerHeight;
 
-            // 🔁 タイマー初期化（100ms間隔）
-            _repeatScrollTimer = new DispatcherTimer();
-            _repeatScrollTimer.Interval = TimeSpan.FromMilliseconds(100);
-            _repeatScrollTimer.Tick += RepeatScrollTick;
-
             InitText();
-        }
 
-        private void RepeatScrollTick(object sender, EventArgs e)
-        {
-            SetScrollToLine(_currentLine + _scrollDirection);
+            CompositionTarget.Rendering += OnFrameUpdate;
         }
 
         private void InitText()
@@ -49,8 +44,8 @@ namespace CSharpXamlSample.Views
                 {
                     Text = $"これはテキストの {i} 行目です。",
                     FontSize = 16,
-                    Height = LineHeight,        // ✅ 明示的に高さを固定
-                    Padding = new Thickness(0)  // ✅ Paddingをなくす
+                    Height = LineHeight,
+                    Padding = new Thickness(0)
                 });
             }
         }
@@ -59,12 +54,13 @@ namespace CSharpXamlSample.Views
         {
             int maxLine = TextPanel.Children.Count - VisibleLines;
             line = Math.Max(0, Math.Min(maxLine, line));
+
+            if (line == _currentLine) return;
+
             MyScrollViewer.ScrollToVerticalOffset(line * LineHeight);
             _currentLine = line;
             UpdateSlider();
         }
-        private Point _startDragPoint;
-        private int _startLine;
 
         private void ScrollViewer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -87,45 +83,6 @@ namespace CSharpXamlSample.Views
         private void ScrollViewer_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Mouse.Capture(null);
-        }
-
-        private void InertiaScroll(object sender, EventArgs e)
-        {
-            if (Math.Abs(_velocity) < 0.5)
-            {
-                _inertiaTimer.Stop();
-                StopInertiaAndSnap(); // ✅ 慣性終了後もスナップ
-                return;
-            }
-
-            MyScrollViewer.ScrollToVerticalOffset(MyScrollViewer.VerticalOffset + _velocity * 0.016);
-            _velocity *= 0.90;
-            UpdateSlider();
-        }
-
-        private void Slider_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            _draggingSlider = false;
-            Mouse.Capture(null);
-        }
-
-        private void StopInertiaAndSnap()
-        {
-            double offset = MyScrollViewer.VerticalOffset;
-            double snappedOffset = Math.Round(offset / LineHeight) * LineHeight;
-            MyScrollViewer.ScrollToVerticalOffset(snappedOffset);
-            UpdateSlider();
-        }
-        private int _currentLine = 0;
-
-        private void UpButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetScrollToLine(_currentLine - 1);
-        }
-
-        private void DownButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetScrollToLine(_currentLine + 1);
         }
 
         private void UpdateSlider()
@@ -161,6 +118,12 @@ namespace CSharpXamlSample.Views
             SetScrollToLine(line);
         }
 
+        private void Slider_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _draggingSlider = false;
+            Mouse.Capture(null);
+        }
+
         private void ScrollTrack_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var track = (Grid)sender;
@@ -177,31 +140,87 @@ namespace CSharpXamlSample.Views
             UpdateSlider();
         }
 
+        // ▲▼ボタン押しっぱなし対応（CompositionTarget.Rendering）
+
+        private bool _isScrollingHeld = false;
+        private int _scrollHeldDirection = 0;
+        private int _scrollFrameCounter = 0;
+
+        private void OnFrameUpdate(object sender, EventArgs e)
+        {
+            if (_awaitingHoldStart)
+            {
+                if ((DateTime.Now - _pressStartTime).TotalMilliseconds >= 100)
+                {
+                    // 長押し判定で連続スクロール開始
+                    _awaitingHoldStart = false;
+                    _isScrollingHeld = true;
+                    SetScrollToLine(_currentLine + _scrollHeldDirection); // 初回
+                }
+                return;
+            }
+
+            if (_isScrollingHeld)
+            {
+                _scrollFrameCounter++;
+                if (_scrollFrameCounter % 2 == 0)
+                {
+                    SetScrollToLine(_currentLine + _scrollHeldDirection);
+                }
+            }
+        }
+
         private void UpButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            _scrollDirection = -1;
-            SetScrollToLine(_currentLine + _scrollDirection); // まず1回スクロール
-            _repeatScrollTimer.Start();
-            Mouse.Capture((IInputElement)sender);
+            _pressStartTime = DateTime.Now;
+            _scrollHeldDirection = -1;
+            _scrollFrameCounter = 0;
+            _awaitingHoldStart = true;
+            _heldButton = (UIElement)sender;
+
+            Mouse.Capture(_heldButton);
         }
 
         private void DownButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            _scrollDirection = 1;
-            SetScrollToLine(_currentLine + _scrollDirection);
-            _repeatScrollTimer.Start();
-            Mouse.Capture((IInputElement)sender);
+            _pressStartTime = DateTime.Now;
+            _scrollHeldDirection = 1;
+            _scrollFrameCounter = 0;
+            _awaitingHoldStart = true;
+            _heldButton = (UIElement)sender;
+
+            Mouse.Capture(_heldButton);
         }
 
         private void ScrollButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            _repeatScrollTimer.Stop();
+            if (_awaitingHoldStart)
+            {
+                // クリック扱い：1行だけスクロール
+                SetScrollToLine(_currentLine + _scrollHeldDirection);
+            }
+
+            _awaitingHoldStart = false;
+            _isScrollingHeld = false;
+            _heldButton = null;
             Mouse.Capture(null);
         }
 
         private void ScrollButton_LostMouseCapture(object sender, MouseEventArgs e)
         {
-            _repeatScrollTimer.Stop();
+            _awaitingHoldStart = false;
+            _isScrollingHeld = false;
+            _heldButton = null;
+        }
+
+        private void UpButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetScrollToLine(_currentLine - 1);
+        }
+
+        private void DownButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetScrollToLine(_currentLine + 1);
         }
     }
 }
