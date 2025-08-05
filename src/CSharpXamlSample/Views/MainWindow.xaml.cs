@@ -60,6 +60,7 @@ namespace CSharpXamlSample.Views
             MyScrollViewer.ScrollToVerticalOffset(line * LineHeight);
             _currentLine = line;
             UpdateSlider();
+            CheckIfAtBottom();
         }
 
         private void ScrollViewer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -221,6 +222,31 @@ namespace CSharpXamlSample.Views
         private void DownButton_Click(object sender, RoutedEventArgs e)
         {
             SetScrollToLine(_currentLine + 1);
+        }
+
+        private void CheckIfAtBottom()
+        {
+            int maxLine = TextPanel.Children.Count - VisibleLines;
+            if (_currentLine >= maxLine)
+            {
+                AgreeButton.IsEnabled = true;
+            }
+            else
+            {
+                AgreeButton.IsEnabled = false;
+            }
+        }
+
+        private void AgreeButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("同意ありがとうございます！");
+            // ここで画面遷移や処理続行などを実装できます。
+        }
+
+        private void DisagreeButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("同意されなかったため、アプリケーションを終了します。");
+            Application.Current.Shutdown();
         }
     }
 }

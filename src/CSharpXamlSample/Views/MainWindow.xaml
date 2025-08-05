@@ -8,56 +8,73 @@
         Title="{Binding Title}" Height="500" Width="1200"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="30"/>
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- テキスト＋スクロールバー -->
+            <RowDefinition Height="Auto"/>
+            <!-- ボタン -->
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="30"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- テキスト表示枠 -->
-        <Border Grid.Column="0" BorderBrush="Black" BorderThickness="2" Height="152">
-            <ScrollViewer x:Name="MyScrollViewer"
-                          VerticalScrollBarVisibility="Hidden"
-                          PreviewMouseLeftButtonDown="ScrollViewer_PreviewMouseLeftButtonDown"
-                          PreviewMouseMove="ScrollViewer_PreviewMouseMove"
-                          PreviewMouseLeftButtonUp="ScrollViewer_PreviewMouseLeftButtonUp"
-                          Height="152"
-                          Padding="0,4,0,4">
-                <StackPanel x:Name="TextPanel" />
-            </ScrollViewer>
-        </Border>
+            <!-- テキスト表示枠 -->
+            <Border Grid.Column="0" BorderBrush="Black" BorderThickness="2" Height="152">
+                <ScrollViewer x:Name="MyScrollViewer"
+                              VerticalScrollBarVisibility="Hidden"
+                              PreviewMouseLeftButtonDown="ScrollViewer_PreviewMouseLeftButtonDown"
+                              PreviewMouseMove="ScrollViewer_PreviewMouseMove"
+                              PreviewMouseLeftButtonUp="ScrollViewer_PreviewMouseLeftButtonUp"
+                              Height="152"
+                              Padding="0,4,0,4">
+                    <StackPanel x:Name="TextPanel" />
+                </ScrollViewer>
+            </Border>
 
-        <!-- スクロールバーと上下ボタン -->
-        <Grid Grid.Column="1" Height="152">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="30"/>
-            </Grid.RowDefinitions>
+            <!-- スクロールバーと上下ボタン -->
+            <Grid Grid.Column="1" Height="152">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
 
-            <Button Content="▲"
-                    Grid.Row="0"
-                    Click="UpButton_Click"
-                    PreviewMouseLeftButtonDown="UpButton_PreviewMouseLeftButtonDown"
-                    PreviewMouseLeftButtonUp="ScrollButton_PreviewMouseLeftButtonUp"
-                    LostMouseCapture="ScrollButton_LostMouseCapture"/>
+                <Button Content="▲"
+                        Grid.Row="0"
+                        Click="UpButton_Click"
+                        PreviewMouseLeftButtonDown="UpButton_PreviewMouseLeftButtonDown"
+                        PreviewMouseLeftButtonUp="ScrollButton_PreviewMouseLeftButtonUp"
+                        LostMouseCapture="ScrollButton_LostMouseCapture"/>
 
-            <Grid Grid.Row="1" Background="LightGray" MouseDown="ScrollTrack_MouseDown">
-                <Rectangle x:Name="Slider"
-                           Fill="DarkGray"
-                           VerticalAlignment="Top"
-                           Height="30"
-                           Margin="5,0"
-                           MouseDown="Slider_MouseDown"
-                           MouseMove="Slider_MouseMove"
-                           MouseUp="Slider_MouseUp"/>
+                <Grid Grid.Row="1" Background="LightGray" MouseDown="ScrollTrack_MouseDown">
+                    <Rectangle x:Name="Slider"
+                               Fill="DarkGray"
+                               VerticalAlignment="Top"
+                               Height="30"
+                               Margin="5,0"
+                               MouseDown="Slider_MouseDown"
+                               MouseMove="Slider_MouseMove"
+                               MouseUp="Slider_MouseUp"/>
+                </Grid>
+
+                <Button Content="▼"
+                        Grid.Row="2"
+                        Click="DownButton_Click"
+                        PreviewMouseLeftButtonDown="DownButton_PreviewMouseLeftButtonDown"
+                        PreviewMouseLeftButtonUp="ScrollButton_PreviewMouseLeftButtonUp"
+                        LostMouseCapture="ScrollButton_LostMouseCapture"/>
             </Grid>
-
-            <Button Content="▼"
-                    Grid.Row="2"
-                    Click="DownButton_Click"
-                    PreviewMouseLeftButtonDown="DownButton_PreviewMouseLeftButtonDown"
-                    PreviewMouseLeftButtonUp="ScrollButton_PreviewMouseLeftButtonUp"
-                    LostMouseCapture="ScrollButton_LostMouseCapture"/>
         </Grid>
+
+        <!-- ✅ 同意・非同意ボタン：下に配置 -->
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,20,0,0">
+            <Button x:Name="AgreeButton" Content="同意する" IsEnabled="False" Width="100" Margin="5" Click="AgreeButton_Click"/>
+            <Button x:Name="DisagreeButton" Content="同意しない" Width="100" Margin="5" Click="DisagreeButton_Click"/>
+        </StackPanel>
     </Grid>
 </Window>
