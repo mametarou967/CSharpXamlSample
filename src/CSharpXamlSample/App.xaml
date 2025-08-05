@@ -1,8 +1,8 @@
-﻿<prism:PrismApplication x:Class="E220_900T225_ConfigTool.App"
+﻿<prism:PrismApplication x:Class="CSharpXamlSample.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	     xmlns:prism="http://prismlibrary.com/"
-             xmlns:local="clr-namespace:E220_900T225_ConfigTool">
+             xmlns:local="clr-namespace:CSharpXamlSample">
     <Application.Resources>
          
     </Application.Resources>

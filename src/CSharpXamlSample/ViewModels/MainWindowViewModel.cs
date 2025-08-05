@@ -5,12 +5,12 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace E220_900T225_ConfigTool.ViewModels
+namespace CSharpXamlSample.ViewModels
 {
 
     public class MainWindowViewModel : BindableBase
     {
-        private string _title = "E220_900T225_ConfigTool";
+        private string _title = "CSharpXamlSample";
         public string Title
         {
             get { return _title; }

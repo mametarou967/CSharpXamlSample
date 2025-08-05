@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace E220_900T225_ConfigTool.Properties
+namespace CSharpXamlSample.Properties
 {
 
 

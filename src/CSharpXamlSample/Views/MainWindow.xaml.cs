@@ -4,14 +4,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace E220_900T225_ConfigTool.Views
+namespace CSharpXamlSample.Views
 {
     public partial class MainWindow : Window
     {
-        private bool _isDragging = false;
-        private Point _lastMousePoint;
         private double _velocity = 0;
-        private DateTime _lastMoveTime;
         private DispatcherTimer _inertiaTimer;
 
         private bool _draggingSlider = false;
@@ -19,13 +16,14 @@ namespace E220_900T225_ConfigTool.Views
 
         private const double LineHeight = 24;
         private const int VisibleLines = 6;
-        private const double ScrollViewerHeight = LineHeight * VisibleLines; // = 144
+        private const double ExtraPadding = 8; // 上下4pxずつ
+        private const double ScrollViewerHeight = LineHeight * VisibleLines + ExtraPadding;
 
         public MainWindow()
         {
             InitializeComponent();
-            MyScrollViewer.Height = ScrollViewerHeight;     // ✅ 明示的に6行分に設定
-            ((Border)MyScrollViewer.Parent).Height = ScrollViewerHeight; // 外枠も
+            MyScrollViewer.Height = ScrollViewerHeight;
+            ((Border)MyScrollViewer.Parent).Height = ScrollViewerHeight;
             InitText();
         }
         private void InitText()

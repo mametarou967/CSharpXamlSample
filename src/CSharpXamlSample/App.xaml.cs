@@ -1,9 +1,9 @@
-﻿using E220_900T225_ConfigTool.Views;
+﻿using CSharpXamlSample.Views;
 using Prism.Ioc;
 using Prism.Modularity;
 using System.Windows;
 
-namespace E220_900T225_ConfigTool
+namespace CSharpXamlSample
 {
     /// <summary>
     /// Interaction logic for App.xaml
