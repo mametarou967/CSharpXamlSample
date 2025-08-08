@@ -6,7 +6,8 @@
         xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Wpf"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="{Binding Title}" Height="500" Width="1200"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Loaded="MainWindow_Loaded">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

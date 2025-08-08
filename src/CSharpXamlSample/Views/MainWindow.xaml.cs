@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace CSharpXamlSample.Views
 {
@@ -38,7 +39,8 @@ namespace CSharpXamlSample.Views
 
         private void InitText()
         {
-            for (int i = 1; i <= 50; i++)
+            TextPanel.Children.Clear();
+            for (int i = 1; i <= 12; i++) // ← 6行しかないケース
             {
                 TextPanel.Children.Add(new TextBlock
                 {
@@ -48,6 +50,9 @@ namespace CSharpXamlSample.Views
                     Padding = new Thickness(0)
                 });
             }
+
+            // レイアウトが反映されたあとに呼び出し
+            Dispatcher.InvokeAsync(UpdateSlider, DispatcherPriority.Loaded);
         }
 
         private void SetScrollToLine(int line)
@@ -59,6 +64,10 @@ namespace CSharpXamlSample.Views
 
             MyScrollViewer.ScrollToVerticalOffset(line * LineHeight);
             _currentLine = line;
+
+            // 強制的にレイアウト再評価 → スライダーの ActualHeight 等が正しくなる
+            MyScrollViewer.UpdateLayout();
+
             UpdateSlider();
             CheckIfAtBottom();
         }
@@ -88,16 +97,34 @@ namespace CSharpXamlSample.Views
 
         private void UpdateSlider()
         {
-            double scrollableHeight = MyScrollViewer.ExtentHeight - MyScrollViewer.ViewportHeight;
-            if (scrollableHeight <= 0) return;
+            double extentHeight = MyScrollViewer.ExtentHeight;
+            double viewportHeight = MyScrollViewer.ViewportHeight;
+            double scrollableHeight = extentHeight - viewportHeight;
+            double trackHeight = ((Grid)Slider.Parent).ActualHeight;
+
+            if (scrollableHeight <= 0)
+            {
+                Slider.Height = trackHeight;
+                Slider.Margin = new Thickness(5, 0, 5, 0);
+                Slider.Visibility = Visibility.Visible;
+                return;
+            }
+
+            double sliderHeight = Math.Max(20, viewportHeight / extentHeight * trackHeight);
+            Slider.Height = sliderHeight;
 
             double ratio = MyScrollViewer.VerticalOffset / scrollableHeight;
+            double maxSliderTop = trackHeight - sliderHeight;
 
-            double trackHeight = ((Grid)Slider.Parent).ActualHeight;
-            double maxSliderTop = trackHeight - Slider.ActualHeight;
-            double sliderTop = ratio * maxSliderTop;
+            // ✅ 少数を四捨五入してズレを防ぐ
+            double sliderTop = Math.Round(ratio * maxSliderTop);
+
             Slider.Margin = new Thickness(5, sliderTop, 5, 0);
+            Slider.Visibility = Visibility.Visible;
         }
+
+
+
 
         private void Slider_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -140,6 +167,7 @@ namespace CSharpXamlSample.Views
             MyScrollViewer.ScrollToVerticalOffset(offset);
             UpdateSlider();
         }
+
 
         // ▲▼ボタン押しっぱなし対応（CompositionTarget.Rendering）
 
@@ -247,6 +275,12 @@ namespace CSharpXamlSample.Views
         {
             MessageBox.Show("同意されなかったため、アプリケーションを終了します。");
             Application.Current.Shutdown();
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // 初期レイアウト完了後に実行されるので、サイズ情報が正しい
+            UpdateSlider();
         }
     }
 }
